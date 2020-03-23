@@ -18,6 +18,10 @@ public class GameManager : MonoBehaviour {
 	
 	public Text mainScoreDisplay;
 	public Text mainTimerDisplay;
+	public Text addedTimeDisplay;
+
+	public float timeToDisplayAddedTime = 1.2f;
+	private float timeToStopDispalyAddedTime = 0.0f;
 
 	public GameObject gameOverScoreOutline;
 
@@ -57,6 +61,10 @@ public class GameManager : MonoBehaviour {
 		// inactivate the nextLevelButtons gameObject, if it is set
 		if (nextLevelButtons)
 			nextLevelButtons.SetActive (false);
+
+		// inactivate the addedTimeDispal text object, if it is set
+		if (addedTimeDisplay.gameObject)
+			addedTimeDisplay.gameObject.SetActive(false);
 	}
 
 	// this is the main game event loop
@@ -71,6 +79,9 @@ public class GameManager : MonoBehaviour {
 				mainTimerDisplay.text = currentTime.ToString ("0.00");				
 			}
 		}
+
+		if (Time.time >= timeToStopDispalyAddedTime)
+			addedTimeDisplay.gameObject.SetActive(false);
 	}
 
 	void EndGame() {
@@ -122,6 +133,21 @@ public class GameManager : MonoBehaviour {
 		
 		// increase the time by the timeAmount
 		currentTime += timeAmount;
+		if (timeAmount > 0)
+		{
+			addedTimeDisplay.text = "+ " + timeAmount.ToString("0.00") + "!";
+			addedTimeDisplay.color = new Color(0.0f, 1.0f, 0.0f, 0.75f);
+			addedTimeDisplay.gameObject.SetActive(true);
+			timeToStopDispalyAddedTime = Time.time + timeToDisplayAddedTime;
+		}
+		if (timeAmount < 0)
+		{
+			addedTimeDisplay.text = "- " + Mathf.Abs(timeAmount).ToString("0.00") + "!!";
+			addedTimeDisplay.color = new Color(1.0f, 0.0f, 0.0f, 0.75f);
+			addedTimeDisplay.gameObject.SetActive(true);
+			timeToStopDispalyAddedTime = Time.time + timeToDisplayAddedTime;
+		}
+
 		
 		// don't let it go negative
 		if (currentTime < 0)
